@@ -5,13 +5,13 @@ import { Page } from '@playwright/test';
 // Currently a bare template - add locators and actions as this page is built out.
 export class DysonManufacturerPage extends BasePage {
 
-  // Locators
-  // Add locators here as page elements are identified.
+    // Locators
+    // Add locators here as page elements are identified.
 
-  constructor(page: Page) {
-    super(page);
-  }
+    constructor(page: Page) {
+        super(page);
+    }
 
-  // Actions
+    // Actions
 
 }

@@ -38,13 +38,15 @@ tsconfig.json
 - [x] Fixtures file created (`fixtures/test-options.ts`) wiring Page Objects into `test`
 - [x] Example test using a fixture (`tests/example.spec.ts`)
 - [x] CI workflow added (`.github/workflows/playwright.yml`)
+- [x] `.env` handling added (`dotenv`) — `.env` is gitignored, `.env.example` is the tracked template
 
 ### Still to build out
 
 - [ ] Add locators and actions to `DysonManufacturerPage`
 - [ ] Add a Page Object + fixture for every new page under test
 - [ ] Add page-specific assertions/checks (rather than generic ones in test files)
-- [ ] Decide on test data handling (e.g. a `test-data/` folder, or `.env` for environment config)
+- [ ] Decide on test data handling (e.g. a `test-data/` folder for non-secret fixtures)
+- [ ] Add real values for `USERNAME`/`PASSWORD` to CI secrets so the pipeline can use them too
 - [ ] Add a `baseURL` to `playwright.config.ts` once a fixed test environment is agreed
 - [ ] Add more example tests demonstrating common patterns (data-driven tests, hooks, tags)
 - [ ] Agree and document locator/action naming conventions
@@ -57,6 +59,22 @@ Keep this consistent as the framework grows:
 - One short comment above each file/class explaining what it's for.
 - `// Locators` and `// Actions` as section headers inside every Page Object, indented to match the class body.
 - Comments explain **why**, not what — skip anything that just restates the code below it.
+
+## Environment variables / secrets
+
+Secrets (URLs, usernames, passwords, API keys) live in a local `.env` file,
+loaded via `dotenv` in `playwright.config.ts`. `.env` is gitignored — never
+commit it.
+
+Setup: copy `.env.example` to `.env` and fill in real values.
+
+```
+cp .env.example .env
+```
+
+Access variables in code via `process.env.VARIABLE_NAME`. Whenever you add
+a new variable, add its key (no value) to `.env.example` too, so the
+template stays up to date for anyone else setting up the project.
 
 ## Running tests
 
