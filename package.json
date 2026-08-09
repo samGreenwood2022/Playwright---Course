@@ -1,0 +1,18 @@
+{
+  "name": "playwright---course",
+  "version": "1.0.0",
+  "description": "Playwright Course",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report"
+  },
+  "author": "Sam Greenwood",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.2.0"
+  }
+}
