@@ -32,7 +32,7 @@ tsconfig.json
 - [x] `.gitignore` excludes `node_modules`, `test-results`, `playwright-report`
 - [x] `playwright.config.ts` configured (chromium/firefox/webkit projects, HTML reporter, trace on retry)
 - [x] `tsconfig.json` added (strict mode)
-- [x] npm scripts added (`test`, `test:headed`, `test:ui`, `report`)
+- [x] npm scripts added (`test`, `test:headed`, `test:ui`, `report`, `codegen`)
 - [x] `BasePage` created — holds the shared `page` instance every Page Object extends
 - [x] First Page Object created (`NbsHomepage`) extending `BasePage`
 - [x] Fixtures file created (`fixtures/test-options.ts`) wiring Page Objects into `test`
@@ -89,3 +89,16 @@ npm run test:headed  # run with the browser visible
 npm run test:ui      # run in Playwright's UI mode
 npm run report        # open the last HTML report
 ```
+
+## Generating locators with codegen
+
+Playwright's codegen tool opens a browser, records your clicks/inputs, and
+writes the locator code for you — a good starting point for filling in a
+Page Object's `// Locators` and `// Actions` sections.
+
+```
+npm run codegen -- https://source.thenbs.com/en/gb
+```
+
+The `--` is required so npm passes the URL through to codegen instead of
+treating it as an npm flag.
