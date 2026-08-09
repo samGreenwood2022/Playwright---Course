@@ -44,6 +44,7 @@ tsconfig.json
 - [x] `BASE_URL` added as a GitHub Actions repository secret and passed into the test step via `env:` in `playwright.yml` — CI has no `.env` file, so this is required for `baseURL` to resolve there
 - [x] GitHub Actions bumped to versions targeting Node 24 (`actions/checkout@v7`, `actions/setup-node@v7`, `actions/upload-artifact@v7`), clearing the Node 20 deprecation warning
 - [x] `dotenv` startup noise silenced with `quiet: true` in `playwright.config.ts`
+- [x] Playwright browsers cached in CI (`actions/cache`, keyed on `package-lock.json`) — skips the browser download on cache hits, speeding up the pipeline
 
 ### Still to build out
 
