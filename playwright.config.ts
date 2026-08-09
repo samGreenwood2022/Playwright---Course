@@ -31,6 +31,11 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+
+    /* Playwright's Chromium defaults to en-US regardless of the host OS locale. */
+    /* Set explicitly so region-aware sites (e.g. NBS Source) serve the UK site, not a US redirect. */
+    locale: 'en-GB',
+    timezoneId: 'Europe/London',
   },
 
   /* Configure projects for major browsers */

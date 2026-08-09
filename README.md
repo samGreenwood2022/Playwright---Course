@@ -39,6 +39,8 @@ tsconfig.json
 - [x] Example test using a fixture (`tests/example.spec.ts`)
 - [x] CI workflow added (`.github/workflows/playwright.yml`)
 - [x] `.env` handling added (`dotenv`) — `.env` is gitignored, `.env.example` is the tracked template
+- [x] `baseURL` wired to `.env` (`BASE_URL`) in `playwright.config.ts` — Page Objects use relative `goto('/')`
+- [x] `locale`/`timezoneId` set (`en-GB` / `Europe/London`) — Playwright's Chromium defaults to `en-US`, which was tripping the NBS site's region redirect to its US site
 
 ### Still to build out
 
@@ -47,7 +49,6 @@ tsconfig.json
 - [ ] Add page-specific assertions/checks (rather than generic ones in test files)
 - [ ] Decide on test data handling (e.g. a `test-data/` folder for non-secret fixtures)
 - [ ] Add real values for `USERNAME`/`PASSWORD` to CI secrets so the pipeline can use them too
-- [ ] Add a `baseURL` to `playwright.config.ts` once a fixed test environment is agreed
 - [ ] Add more example tests demonstrating common patterns (data-driven tests, hooks, tags)
 - [ ] Agree and document locator/action naming conventions
 - [ ] Agree on assertion conventions (built-in `expect` vs custom matchers)
