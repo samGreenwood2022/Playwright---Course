@@ -41,6 +41,9 @@ tsconfig.json
 - [x] `.env` handling added (`dotenv`) — `.env` is gitignored, `.env.example` is the tracked template
 - [x] `baseURL` wired to `.env` (`BASE_URL`) in `playwright.config.ts` — Page Objects use relative `goto('/')`
 - [x] `locale`/`timezoneId` set (`en-GB` / `Europe/London`) — Playwright's Chromium defaults to `en-US`, which was tripping the NBS site's region redirect to its US site
+- [x] `BASE_URL` added as a GitHub Actions repository secret and passed into the test step via `env:` in `playwright.yml` — CI has no `.env` file, so this is required for `baseURL` to resolve there
+- [x] GitHub Actions bumped to versions targeting Node 24 (`actions/checkout@v7`, `actions/setup-node@v7`, `actions/upload-artifact@v7`), clearing the Node 20 deprecation warning
+- [x] `dotenv` startup noise silenced with `quiet: true` in `playwright.config.ts`
 
 ### Still to build out
 
@@ -48,7 +51,7 @@ tsconfig.json
 - [ ] Add a Page Object + fixture for every new page under test
 - [ ] Add page-specific assertions/checks (rather than generic ones in test files)
 - [ ] Decide on test data handling (e.g. a `test-data/` folder for non-secret fixtures)
-- [ ] Add real values for `USERNAME`/`PASSWORD` to CI secrets so the pipeline can use them too
+- [ ] Add `USERNAME`/`PASSWORD` as GitHub Actions secrets (same pattern as `BASE_URL`) once a test actually needs them
 - [ ] Add more example tests demonstrating common patterns (data-driven tests, hooks, tags)
 - [ ] Agree and document locator/action naming conventions
 - [ ] Agree on assertion conventions (built-in `expect` vs custom matchers)
