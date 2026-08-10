@@ -4,6 +4,7 @@
 import { test as base } from '@playwright/test';
 import { NbsHomepage } from '../pages/nbs-homepage';
 import { DysonManufacturerPage } from '../pages/dyson-manufacturer-page';
+import { SearchResultsPage } from '../pages/search-results-page';
 import { BasePage } from '../pages/base-page';
 
 // Declares the names and types of the custom fixtures we're adding.
@@ -11,6 +12,7 @@ import { BasePage } from '../pages/base-page';
 type MyFixtures = {
     nbsHomepage: NbsHomepage;
     dysonManufacturerPage: DysonManufacturerPage;
+    searchResultsPage: SearchResultsPage;
     basePage: BasePage;
 };
 

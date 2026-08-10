@@ -13,6 +13,11 @@ export class SearchResultsPage extends BasePage {
   }
 // Actions
 
-
+  // Clicks the Dyson manufacturer link and waits for the resulting navigation to
+  // finish, so callers land on a fully loaded page before doing anything else.
+  async selectManufacturer(expectedUrl: string) {
+    await this.dysonLink.click();
+    await this.page.waitForURL(expectedUrl);
+  }
 
 }

@@ -34,9 +34,11 @@ tsconfig.json
 - [x] `tsconfig.json` added (strict mode)
 - [x] npm scripts added (`test`, `test:headed`, `test:ui`, `report`, `codegen`)
 - [x] `BasePage` created — holds the shared `page` instance every Page Object extends
-- [x] First Page Object created (`NbsHomepage`) extending `BasePage`
+- [x] First Page Object created (`NbsHomepage`) extending `BasePage` — has a `searchInput` locator and `navigateToNbsHomepage()` action
+- [x] Second Page Object created (`SearchResultsPage`) — `selectManufacturer(link, expectedUrl)` action wraps a click and its resulting `waitForURL`, keeping that mechanics out of the test file
+- [x] `DysonManufacturerPage` given a `url` property (its expected page URL) — locators/actions for the page itself still to come
 - [x] Fixtures file created (`fixtures/test-options.ts`) wiring Page Objects into `test`
-- [x] Example test using a fixture (`tests/example.spec.ts`)
+- [x] Working end-to-end test flow added (`tests/first-test.spec.ts`, replacing `tests/example.spec.ts`) — navigates NBS homepage → searches → Dyson manufacturer page, then asserts the heading, phone number, and website link
 - [x] CI workflow added (`.github/workflows/playwright.yml`)
 - [x] `.env` handling added (`dotenv`) — `.env` is gitignored, `.env.example` is the tracked template
 - [x] `baseURL` wired to `.env` (`BASE_URL`) in `playwright.config.ts` — Page Objects use relative `goto('/')`
@@ -48,7 +50,8 @@ tsconfig.json
 
 ### Still to build out
 
-- [ ] Add locators and actions to `DysonManufacturerPage`
+- [ ] Add locators and actions to `DysonManufacturerPage` (heading, phone number, website link currently live as raw locators in the test file)
+- [ ] Register `SearchResultsPage` (and `DysonManufacturerPage`) as fixtures and use the fixture-injected page objects in `first-test.spec.ts`, rather than `new NbsHomepage(page)` etc. inside `beforeEach`
 - [ ] Add a Page Object + fixture for every new page under test
 - [ ] Add page-specific assertions/checks (rather than generic ones in test files)
 - [ ] Decide on test data handling (e.g. a `test-data/` folder for non-secret fixtures)

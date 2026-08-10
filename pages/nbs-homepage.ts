@@ -19,7 +19,7 @@ export class NbsHomepage extends BasePage {
 
   // Navigates the browser directly to the NBS Source homepage.
   // '/' resolves against `baseURL` in playwright.config.ts (set from .env).
-  async goto() {
+  async navigateToNbsHomepage() {
     await this.page.goto('/');
   }
 
