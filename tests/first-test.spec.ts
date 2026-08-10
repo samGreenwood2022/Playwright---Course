@@ -1,6 +1,9 @@
 // Import `test` and `expect` from our own fixtures file (not '@playwright/test'
 // directly) so tests get access to the custom Page Object fixtures.
 import { test, expect } from '../fixtures/test-options';
+import { NbsHomepage } from '../pages/nbs-homepage';
+import { SearchResultsPage } from '../pages/search-results-page';
+
 
 // The manufacturer page we expect to land on after clicking the Dyson search result.
 const DYSON_MANUFACTURER_URL =

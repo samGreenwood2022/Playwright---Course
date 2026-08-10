@@ -1,9 +1,10 @@
 import { BasePage } from './base-page';
-import { Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 
 // Page Object for the NBS Source homepage.
 // Holds the locators and actions specific to this one page.
 export class NbsHomepage extends BasePage {
+  readonly searchInput: Locator;
 
   // Locators
   // Add locators here as page elements are identified, e.g.
@@ -11,6 +12,7 @@ export class NbsHomepage extends BasePage {
 
   constructor(page: Page) {
     super(page);
+    this.searchInput = page.getByRole('textbox', { name: 'Search' });
   }
 
   // Actions
