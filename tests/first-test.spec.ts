@@ -2,6 +2,10 @@
 // directly) so tests get access to the custom Page Object fixtures.
 import { test, expect } from '../fixtures/test-options';
 
+// The manufacturer page we expect to land on after clicking the Dyson search result.
+const DYSON_MANUFACTURER_URL =
+  'https://source.thenbs.com/en/gb/manufacturer/dyson/nakAxHWxDZprdqkBaCdn4U/overview';
+
 test.beforeEach(async ({ page }) => {
   // Navigate to the Dyson Manufacturer homepage before each test.
   const searchInput = page.getByRole('textbox', { name: 'Search' });
@@ -14,7 +18,15 @@ test.beforeEach(async ({ page }) => {
   await searchInput.press('Enter');
   await manufacturerTab.click();
   await dysonLink.click();
-  await expect(page).toHaveURL('https://source.thenbs.com/en/gb/manufacturer/dyson/nakAxHWxDZprdqkBaCdn4U/overview');
+
+  // Clicking the link kicks off a navigation. `waitForURL` blocks until the browser
+  // has actually landed on that URL *and* reached the 'load' event (its default
+  // waitUntil), so the tests below don't start querying a half-rendered page.
+  await page.waitForURL(DYSON_MANUFACTURER_URL);
+
+  // Web-first assertion: confirms we're on the right page and gives a clear
+  // failure message if the navigation went somewhere unexpected.
+  await expect(page).toHaveURL(DYSON_MANUFACTURER_URL);
 });
 
 // Test 01 - Navigate to the Dyson manufacturer page and assert the h1 heading is correct.
