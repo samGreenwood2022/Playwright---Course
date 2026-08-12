@@ -68,3 +68,41 @@ test('assert the company logo is visible and has the correct alt text', async ({
   await expect(logoName).toBeVisible();
 });
 
+// Test 05 - Navigate to the Dyson manufacturer page and assert the linked in icon is displayed.
+test('assert the LinkedIn icon is displayed', async ({ page }) => {
+  const social = page.locator('app-social');
+  const linkedInLink = social.getByRole('link', { name: 'Visit LinkedIn' });
+
+  await expect(linkedInLink).toBeVisible();
+  await expect(linkedInLink).toHaveAttribute('href', 'https://www.linkedin.com/company/dyson/');
+  await expect(linkedInLink).toHaveAttribute('target', '_blank');
+  await expect(linkedInLink).toHaveAttribute('title', 'Visit LinkedIn');
+});
+
+// Test 06 - Navigate to the Dyson manufacturer page and assert the Contact manufacturer button is displayed
+
+test('assert the Contact manufacturer button is displayed', async ({ page }) => {
+  const contactManufacturerButton = page.getByRole('button', { name: 'Contact manufacturer' });
+
+  await expect(contactManufacturerButton).toBeVisible();
+  await expect(contactManufacturerButton).toHaveAttribute('title', 'Contact Dyson');
+});
+
+// Test 07 - Navigate to the Dyson manufacturer page and assert the I'm a manufacturer button is displayed
+test('assert the I\'m a manufacturer button is displayed', async ({ page }) => {
+  const imAManufacturerButton = page.getByRole('link', { name: 'I\'m a manufacturer' });
+
+  await expect(imAManufacturerButton).toBeVisible();
+  await expect(imAManufacturerButton).toHaveText('I\'m a manufacturer');
+  await expect(imAManufacturerButton).toHaveAttribute('href', 'https://manufacturers.thenbs.com/nbs-source');
+});
+
+// test 08 - Navigate to the Dyson manufacturer page and assert dyson logo is present
+test('assert the Dyson logo is present', async ({ page }) => {
+  const dysonLogo = page.locator('app-brand-logo.brand-logo-included').getByRole('img');
+
+
+  await expect(dysonLogo).toBeVisible();
+  // screen readers will read the alt text of the image, so we assert that it is correct.
+  await expect(dysonLogo).toHaveAttribute('alt', 'Dyson');
+});
