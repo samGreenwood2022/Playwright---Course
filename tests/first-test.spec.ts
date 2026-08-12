@@ -55,3 +55,16 @@ test('assert the website link is correct', async ({ page }) => {
   await expect(dysonManufacturerPage.websiteLink).toHaveAttribute('target', '_blank');
 });
 
+// Test 04 - Navigate to the Dyson manufacturer page and assert company logo is visible and has the correct href.
+test('assert the company logo is visible and has the correct alt text', async ({ page }) => {
+  const dysonManufacturerPage = new DysonManufacturerPage(page);
+  const logoContainer = page.locator('a.brand-primary.wrapper');
+  const logoIcon = logoContainer.locator('mat-icon.logo');
+  const logoName = logoContainer.locator('app-name');
+
+  await expect(logoContainer).toHaveAttribute("href", '/en/gb');
+  await expect(logoIcon).toBeVisible();
+  await expect(logoName).toHaveText('NBS Source');
+  await expect(logoName).toBeVisible();
+});
+
