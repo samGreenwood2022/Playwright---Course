@@ -57,7 +57,6 @@ test('assert the website link is correct', async ({ page }) => {
 
 // Test 04 - Navigate to the Dyson manufacturer page and assert company logo is visible and has the correct href.
 test('assert the company logo is visible and has the correct alt text', async ({ page }) => {
-  const dysonManufacturerPage = new DysonManufacturerPage(page);
   const logoContainer = page.locator('a.brand-primary.wrapper');
   const logoIcon = logoContainer.locator('mat-icon.logo');
   const logoName = logoContainer.locator('app-name');
@@ -101,8 +100,29 @@ test('assert the I\'m a manufacturer button is displayed', async ({ page }) => {
 test('assert the Dyson logo is present', async ({ page }) => {
   const dysonLogo = page.locator('app-brand-logo.brand-logo-included').getByRole('img');
 
-
   await expect(dysonLogo).toBeVisible();
   // screen readers will read the alt text of the image, so we assert that it is correct.
   await expect(dysonLogo).toHaveAttribute('alt', 'Dyson');
+});
+
+// Test 09 - Assert that the user can click sign in, go through the sign in process and be returned to the same page they were on before signing in.
+test('assert that the user can click sign in, go through the sign in process and be returned to the same page they were on before signing in', async ({ page }) => {
+  const signInButton = page.getByRole('button', { name: 'Sign in' });
+
+  await signInButton.click();
+});
+
+// Test 10 - Assert the structure of the social media block using an ARIA snapshot.
+// Unlike the assertions above, this checks roles, accessible names and nesting in one go:
+// a list, containing a listitem, containing a link named 'Visit LinkedIn' pointing at Dyson.
+// The match is a subset - the four empty <li> placeholders on the page are ignored.
+test('assert the social block structure', async ({ page }) => {
+  const social = page.locator('app-social');
+
+  await expect(social).toMatchAriaSnapshot(`
+    - list:
+      - listitem:
+        - link "Visit LinkedIn":
+          - /url: https://www.linkedin.com/company/dyson/
+  `);
 });
