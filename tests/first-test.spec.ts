@@ -108,8 +108,25 @@ test('assert the Dyson logo is present', async ({ page }) => {
 // Test 09 - Assert that the user can click sign in, go through the sign in process and be returned to the same page they were on before signing in.
 test('assert that the user can click sign in, go through the sign in process and be returned to the same page they were on before signing in', async ({ page }) => {
   const signInButton = page.getByRole('button', { name: 'Sign in' });
+  const emailInput = page.getByRole('textbox', { name: 'Email address' });
+  const nextButton = page.getByRole('button', { name: 'Next' });
+  const passwordInput = page.getByRole('textbox', { name: 'Password' });
+  const signInButton2 = page.getByRole('button', { name: 'Sign in' });
+  const urlBeforeSignIn = page.url();
+  const avatar = page.getByRole('figure', { name: 'Avatar for TJ Hooker' });
 
   await signInButton.click();
+  // pressSequentially types character-by-character via real keyboard events, rather than
+  // setting the value in one go like fill() - this sign-in widget's email/password fields
+  // are controlled inputs that were dropping most of the value when set with fill().
+  await emailInput.pressSequentially(process.env.USERNAME!);
+  await nextButton.click();
+  await expect(emailInput).toBeEditable()
+  await passwordInput.pressSequentially(process.env.PASSWORD!);
+  await signInButton2.click();
+  await expect(page).toHaveURL(urlBeforeSignIn, { timeout: 10000 });
+  await expect(avatar).toBeVisible();
+
 });
 
 // Test 10 - Assert the structure of the social media block using an ARIA snapshot.
@@ -125,4 +142,64 @@ test('assert the social block structure', async ({ page }) => {
         - link "Visit LinkedIn":
           - /url: https://www.linkedin.com/company/dyson/
   `);
+});
+
+// Test 11 - Assert the back-to-top button is working as expected.
+// This test asserts the back-to-top button is not visible when the page is loaded, 
+// then scrolls down the page and asserts the button is visible, clicks the button 
+// and asserts the page has scrolled back to the top.
+test('assert the back-to-top button is working as expected', async ({ page }) => {
+  const backToTopButton = page.getByRole('button', { name: 'Back to top' });
+  const mainNav = page.getByRole('navigation', { name: 'Main navigation links' });
+  const homeLink = mainNav.getByRole('link', { name: 'Home' });
+
+  await expect(backToTopButton).not.toBeVisible();
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect(backToTopButton).toBeVisible();
+  await backToTopButton.click();
+  await expect(backToTopButton).not.toBeVisible();
+
+  await expect(homeLink).toBeVisible();
+
+
+
+});
+
+// Test 12 - Assert the main navigation structure (roles, names, order, hrefs) via an ARIA snapshot.
+// Using the accessibility tree instead of CSS/HTML locators means order, visibility, accessible
+// names and hrefs are all covered by one assertion - and the closed Browse dropdown's category
+// links are excluded automatically, since they're not exposed to the accessibility tree while closed
+// (unlike a CSS `:visible` check, which doesn't catch how that panel is actually hidden).
+test('assert the main navigation structure is correct', async ({ page }) => {
+  const mainNav = page.getByRole('navigation', { name: 'Main navigation links' });
+
+  await expect(mainNav).toMatchAriaSnapshot(`
+    - navigation "Main navigation links":
+      - link "Home":
+        - /url: /en/gb
+      - link "What's new":
+        - /url: /en/gb/whats-new
+      - article:
+        - button "Browse"
+        - menu "Browse menu"
+      - button "BIM Library"
+      - link "Inspiration":
+        - /url: /en/gb/inspiration
+      - link "Collections":
+        - /url: /en/gb/collections
+      - link "CPD":
+        - /url: /en/gb/cpd
+  `);
+});
+
+// Test 13 - Assert the Browse dropdown displays categories, without asserting the exact
+// list - the categories themselves are content-managed and expected to change.
+test('assert the Browse dropdown displays categories', async ({ page }) => {
+  const mainNav = page.getByRole('navigation', { name: 'Main navigation links' });
+  const browseButton = mainNav.getByRole('button', { name: 'Browse' });
+  const menuPanel = mainNav.getByRole('menu', { name: 'Browse menu' });
+
+  await browseButton.hover();
+  await expect(menuPanel).toBeVisible();
+  await expect(menuPanel.getByRole('link')).not.toHaveCount(0);
 });
