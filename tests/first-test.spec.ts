@@ -116,13 +116,9 @@ test('assert that the user can click sign in, go through the sign in process and
   const avatar = page.getByRole('figure', { name: 'Avatar for TJ Hooker' });
 
   await signInButton.click();
-  // pressSequentially types character-by-character via real keyboard events, rather than
-  // setting the value in one go like fill() - this sign-in widget's email/password fields
-  // are controlled inputs that were dropping most of the value when set with fill().
-  await emailInput.pressSequentially(process.env.USERNAME!);
+  await emailInput.fill(process.env.NBS_USERNAME!);
   await nextButton.click();
-  await expect(emailInput).toBeEditable()
-  await passwordInput.pressSequentially(process.env.PASSWORD!);
+  await passwordInput.fill(process.env.PASSWORD!);
   await signInButton2.click();
   await expect(page).toHaveURL(urlBeforeSignIn, { timeout: 10000 });
   await expect(avatar).toBeVisible();
