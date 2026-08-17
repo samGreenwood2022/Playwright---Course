@@ -41,13 +41,10 @@ test('assert the website link is correct', async ({ dysonManufacturerPage }) => 
 });
 
 // Test 04 - Navigate to the Dyson manufacturer page and assert company logo is visible and has the correct href.
-test('assert the company logo is visible and has the correct alt text', async ({ page }) => {
-  const logoContainer = page.getByRole('link', { name: 'NBS Source' });
-
-  await expect(logoContainer).toHaveAttribute("href", '/en/gb');
-  await expect(logoContainer).toBeVisible();
-  await expect(logoContainer).toHaveText('NBS Source');
-  await expect(logoContainer).toBeVisible();
+test('assert the company logo is visible and has the correct alt text', async ({ basePage }) => {
+  await expect(basePage.nbsLogo).toHaveAttribute("href", '/en/gb');
+  await expect(basePage.nbsLogo).toBeVisible();
+  await expect(basePage.nbsLogo).toContainText('NBS Source');
 });
 
 // Test 05 - Navigate to the Dyson manufacturer page and assert the linked in icon is displayed.
