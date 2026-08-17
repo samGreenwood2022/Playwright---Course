@@ -48,41 +48,31 @@ test('assert the company logo is visible and has the correct alt text', async ({
 });
 
 // Test 05 - Navigate to the Dyson manufacturer page and assert the linked in icon is displayed.
-test('assert the LinkedIn icon is displayed', async ({ page }) => {
-  const social = page.locator('app-social');
-  const linkedInLink = social.getByRole('link', { name: 'Visit LinkedIn' });
-
-  await expect(linkedInLink).toBeVisible();
-  await expect(linkedInLink).toHaveAttribute('href', 'https://www.linkedin.com/company/dyson/');
-  await expect(linkedInLink).toHaveAttribute('target', '_blank');
-  await expect(linkedInLink).toHaveAttribute('title', 'Visit LinkedIn');
+test('assert the LinkedIn icon is displayed', async ({ dysonManufacturerPage }) => {
+  await expect(dysonManufacturerPage.linkedInIcon).toBeVisible();
+  await expect(dysonManufacturerPage.linkedInIcon).toHaveAttribute('href', 'https://www.linkedin.com/company/dyson/');
+  await expect(dysonManufacturerPage.linkedInIcon).toHaveAttribute('target', '_blank');
+  await expect(dysonManufacturerPage.linkedInIcon).toHaveAttribute('title', 'Visit LinkedIn');
 });
 
 // Test 06 - Navigate to the Dyson manufacturer page and assert the Contact manufacturer button is displayed
-
-test('assert the Contact manufacturer button is displayed', async ({ page }) => {
-  const contactManufacturerButton = page.getByRole('button', { name: 'Contact manufacturer' });
-
-  await expect(contactManufacturerButton).toBeVisible();
-  await expect(contactManufacturerButton).toHaveAttribute('title', 'Contact Dyson');
+test('assert the Contact manufacturer button is displayed', async ({ dysonManufacturerPage }) => {
+  await expect(dysonManufacturerPage.contactManufacturerCta).toBeVisible();
+  await expect(dysonManufacturerPage.contactManufacturerCta).toHaveAttribute('title', 'Contact Dyson');
 });
 
 // Test 07 - Navigate to the Dyson manufacturer page and assert the I'm a manufacturer button is displayed
-test('assert the I\'m a manufacturer button is displayed', async ({ page }) => {
-  const imAManufacturerButton = page.getByRole('link', { name: 'I\'m a manufacturer' });
-
-  await expect(imAManufacturerButton).toBeVisible();
-  await expect(imAManufacturerButton).toHaveText('I\'m a manufacturer');
-  await expect(imAManufacturerButton).toHaveAttribute('href', 'https://manufacturers.thenbs.com/nbs-source');
+test('assert the I\'m a manufacturer button is displayed', async ({ dysonManufacturerPage }) => {
+  await expect(dysonManufacturerPage.imAManufacturerCta).toBeVisible();
+  await expect(dysonManufacturerPage.imAManufacturerCta).toHaveText('I\'m a manufacturer');
+  await expect(dysonManufacturerPage.imAManufacturerCta).toHaveAttribute('href', 'https://manufacturers.thenbs.com/nbs-source');
 });
 
 // test 08 - Navigate to the Dyson manufacturer page and assert dyson logo is present
-test('assert the Dyson logo is present', async ({ page }) => {
-  const dysonLogo = page.locator('app-brand-logo.brand-logo-included').getByRole('img');
-
-  await expect(dysonLogo).toBeVisible();
+test('assert the Dyson logo is present', async ({ dysonManufacturerPage }) => {
+  await expect(dysonManufacturerPage.dysonLogo).toBeVisible();
   // screen readers will read the alt text of the image, so we assert that it is correct.
-  await expect(dysonLogo).toHaveAttribute('alt', 'Dyson');
+  await expect(dysonManufacturerPage.dysonLogo).toHaveAttribute('alt', 'Dyson');
 });
 
 // Test 09 - Assert that the user can click sign in, go through the sign in process and be returned to the same page they were on before signing in.

@@ -11,6 +11,9 @@ export class DysonManufacturerPage extends BasePage {
     readonly telephoneNumber: Locator;
     readonly websiteLink: Locator;
     readonly linkedInIcon: Locator;
+    readonly contactManufacturerCta: Locator;
+    readonly imAManufacturerCta: Locator;
+    readonly dysonLogo: Locator;
 
     // Locators
     // Add locators here as page elements are identified.
@@ -22,7 +25,10 @@ export class DysonManufacturerPage extends BasePage {
         this.h1HeadingText = page.getByText('Technology for business', { exact: true });
         this.telephoneNumber = page.getByRole('link', { name: '08003457788' });
         this.websiteLink = page.getByRole('link', { name: 'Website' });
-        this.linkedInIcon = page.locator('app-social');
+        this.linkedInIcon = page.locator('app-social').getByRole('link', { name: 'Visit LinkedIn' });
+        this.contactManufacturerCta = page.getByRole('button', { name: 'Contact manufacturer' });
+        this.imAManufacturerCta = page.getByRole('link', { name: 'I\'m a manufacturer' });
+        this.dysonLogo = page.getByRole('img', {name: 'Dyson'})
     }
 
     // Actions
