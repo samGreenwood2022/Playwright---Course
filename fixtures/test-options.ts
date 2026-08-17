@@ -28,6 +28,9 @@ export const test = base.extend<MyFixtures>({
     dysonManufacturerPage: async ({ page }, use) => {
         await use(new DysonManufacturerPage(page));
     },
+    searchResultsPage: async ({ page }, use) => {
+        await use(new SearchResultsPage(page));
+    },
     basePage: async ({ page }, use) => {
         await use(new BasePage(page));
     },

@@ -1,17 +1,9 @@
 // Import `test` and `expect` from our own fixtures file (not '@playwright/test'
 // directly) so tests get access to the custom Page Object fixtures.
 import { test, expect } from '../fixtures/test-options';
-import { NbsHomepage } from '../pages/nbs-homepage';
-import { SearchResultsPage } from '../pages/search-results-page';
-import { DysonManufacturerPage } from '../pages/dyson-manufacturer-page';
 
-
-
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, dysonManufacturerPage, nbsHomepage, searchResultsPage }) => {
   // Navigate to the Dyson Manufacturer homepage before each test.
-  const nbsHomepage = new NbsHomepage(page);
-  const searchResultsPage = new SearchResultsPage(page);
-  const dysonManufacturerPage = new DysonManufacturerPage(page);
   const url = dysonManufacturerPage.url;
 
   await nbsHomepage.navigateToNbsHomepage();
@@ -26,9 +18,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 // Test 01 - Navigate to the Dyson manufacturer page and assert the h1 heading is correct.
-test('assert the h1 heading is correct', async ({ page }) => {
-  const dysonManufacturerPage = new DysonManufacturerPage(page);
-
+test('assert the h1 heading is correct', async ({ dysonManufacturerPage }) => {
   await expect(dysonManufacturerPage.h1Heading).toBeVisible();
   await expect(dysonManufacturerPage.h1Heading).toContainText('Dyson');
   await expect(dysonManufacturerPage.h1HeadingText).toHaveText('Technology for business');
@@ -36,19 +26,14 @@ test('assert the h1 heading is correct', async ({ page }) => {
 });
 
 // Test 02 - Navigate to the Dyson manufacturer page and assert the telephone number is correct.
-test('assert the telephone number is correct', async ({ page }) => {
-  const dysonManufacturerPage = new DysonManufacturerPage(page);
-
-  await expect(dysonManufacturerPage.telephoneNumber).toBeVisible();
+test('assert the telephone number is correct', async ({ dysonManufacturerPage }) => {
   await expect(dysonManufacturerPage.telephoneNumber).toBeVisible();
   await expect(dysonManufacturerPage.telephoneNumber).toContainText('08003457788');
   await expect(dysonManufacturerPage.telephoneNumber).toHaveAttribute('href', 'tel:08003457788');
 });
 
 // Test 03 - Navigate to the Dyson manufacturer page and assert the website link is correct.
-test('assert the website link is correct', async ({ page }) => {
-  const dysonManufacturerPage = new DysonManufacturerPage(page);
-
+test('assert the website link is correct', async ({ dysonManufacturerPage }) => {
   await expect(dysonManufacturerPage.websiteLink).toBeVisible();
   await expect(dysonManufacturerPage.websiteLink).toContainText('Website');
   await expect(dysonManufacturerPage.websiteLink).toHaveAttribute('href', 'https://www.dyson.co.uk/commercial/overview');
@@ -57,14 +42,12 @@ test('assert the website link is correct', async ({ page }) => {
 
 // Test 04 - Navigate to the Dyson manufacturer page and assert company logo is visible and has the correct href.
 test('assert the company logo is visible and has the correct alt text', async ({ page }) => {
-  const logoContainer = page.locator('a.brand-primary.wrapper');
-  const logoIcon = logoContainer.locator('mat-icon.logo');
-  const logoName = logoContainer.locator('app-name');
+  const logoContainer = page.getByRole('link', { name: 'NBS Source' });
 
   await expect(logoContainer).toHaveAttribute("href", '/en/gb');
-  await expect(logoIcon).toBeVisible();
-  await expect(logoName).toHaveText('NBS Source');
-  await expect(logoName).toBeVisible();
+  await expect(logoContainer).toBeVisible();
+  await expect(logoContainer).toHaveText('NBS Source');
+  await expect(logoContainer).toBeVisible();
 });
 
 // Test 05 - Navigate to the Dyson manufacturer page and assert the linked in icon is displayed.

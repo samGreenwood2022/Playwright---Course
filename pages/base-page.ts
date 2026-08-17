@@ -18,4 +18,10 @@ export class BasePage {
     // Actions
     // Add reusable actions here that every page should share.
 
+    async assert(){
+
+
+        
+    }
+
 }
