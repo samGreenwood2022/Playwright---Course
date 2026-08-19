@@ -76,22 +76,10 @@ test('assert the Dyson logo is present', async ({ dysonManufacturerPage }) => {
 });
 
 // Test 09 - Assert that the user can click sign in, go through the sign in process and be returned to the same page they were on before signing in.
-test('assert that the user can click sign in, go through the sign in process and be returned to the same page they were on before signing in', async ({ page }) => {
-  const signInButton = page.getByRole('button', { name: 'Sign in' });
-  const emailInput = page.getByRole('textbox', { name: 'Email address' });
-  const nextButton = page.getByRole('button', { name: 'Next' });
-  const passwordInput = page.getByRole('textbox', { name: 'Password' });
-  const signInButton2 = page.getByRole('button', { name: 'Sign in' });
-  const urlBeforeSignIn = page.url();
-  const avatar = page.getByRole('figure', { name: 'Avatar for TJ Hooker' });
-
-  await signInButton.click();
-  await emailInput.fill(process.env.NBS_USERNAME!);
-  await nextButton.click();
-  await passwordInput.fill(process.env.PASSWORD!);
-  await signInButton2.click();
-  await expect(page).toHaveURL(urlBeforeSignIn, { timeout: 10000 });
-  await expect(avatar).toBeVisible();
+test('assert that the user can click sign in, go through the sign in process and be returned to the same page they were on before signing in', async ({ signInPage }) => {
+  await signInPage.signIn();
+  await expect(signInPage.page).toHaveURL(signInPage.urlBeforeSignIn, { timeout: 10000 });
+  await expect(signInPage.avatar).toBeVisible();
 
 });
 
