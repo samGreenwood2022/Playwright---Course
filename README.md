@@ -19,6 +19,7 @@ framework, or as a reference when building your own from scratch.
 fixtures/       Custom test fixtures - wires Page Objects into `test`
 pages/          Page Object classes (one per page, all extend BasePage)
 tests/          Spec files
+utils/          Shared test utilities (e.g. accessibility scanning)
 playwright.config.ts
 tsconfig.json
 ```
@@ -47,6 +48,7 @@ tsconfig.json
 - [x] GitHub Actions bumped to versions targeting Node 24 (`actions/checkout@v7`, `actions/setup-node@v7`, `actions/upload-artifact@v7`), clearing the Node 20 deprecation warning
 - [x] `dotenv` startup noise silenced with `quiet: true` in `playwright.config.ts`
 - [x] Playwright browsers cached in CI (`actions/cache`, keyed on `package-lock.json`) — skips the browser download on cache hits, speeding up the pipeline
+- [x] `@axe-core/playwright` installed — accessibility scans run via `utils/axe-utils.ts` and attach results (violation count + full JSON) to the HTML report; deliberately non-failing since existing site issues aren't being fixed and shouldn't fail the pipeline
 
 ### Still to build out
 

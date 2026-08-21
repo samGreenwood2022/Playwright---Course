@@ -1,6 +1,7 @@
 // Import `test` and `expect` from our own fixtures file (not '@playwright/test'
 // directly) so tests get access to the custom Page Object fixtures.
 import { test, expect } from '../fixtures/test-options';
+import { runAxeAccessibilityScan } from '../utils/axe-utils';
 
 test.beforeEach(async ({ page, dysonManufacturerPage, nbsHomepage, searchResultsPage }) => {
   // Navigate to the Dyson Manufacturer homepage before each test.
@@ -132,4 +133,12 @@ test('assert the main navigation structure is correct', async ({ basePage }) => 
       - link "CPD":
         - /url: /en/gb/cpd
   `);
+});
+
+// Test 13 - Run an Axe accessibility scan on the Dyson manufacturer page.
+// This is reporting-only: known issues exist on this page that the dev team
+// isn't fixing, so the scan attaches its results to the report rather than
+// failing the test (which would otherwise fail the pipeline on every run).
+test('accessibility scan of the Dyson manufacturer page', async ({ page }) => {
+  await runAxeAccessibilityScan(page, test.info());
 });
