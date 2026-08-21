@@ -19,6 +19,7 @@ framework, or as a reference when building your own from scratch.
 fixtures/       Custom test fixtures - wires Page Objects into `test`
 pages/          Page Object classes (one per page, all extend BasePage)
 tests/          Spec files
+utils/          Shared test utilities (e.g. accessibility scanning)
 playwright.config.ts
 tsconfig.json
 ```
@@ -32,11 +33,13 @@ tsconfig.json
 - [x] `.gitignore` excludes `node_modules`, `test-results`, `playwright-report`
 - [x] `playwright.config.ts` configured (chromium/firefox/webkit projects, HTML reporter, trace on retry)
 - [x] `tsconfig.json` added (strict mode)
-- [x] npm scripts added (`test`, `test:headed`, `test:ui`, `report`)
+- [x] npm scripts added (`test`, `test:headed`, `test:ui`, `report`, `codegen`)
 - [x] `BasePage` created — holds the shared `page` instance every Page Object extends
-- [x] First Page Object created (`NbsHomepage`) extending `BasePage`
+- [x] First Page Object created (`NbsHomepage`) extending `BasePage` — has a `searchInput` locator and `navigateToNbsHomepage()` action
+- [x] Second Page Object created (`SearchResultsPage`) — `selectManufacturer(link, expectedUrl)` action wraps a click and its resulting `waitForURL`, keeping that mechanics out of the test file
+- [x] `DysonManufacturerPage` given a `url` property (its expected page URL) — locators/actions for the page itself still to come
 - [x] Fixtures file created (`fixtures/test-options.ts`) wiring Page Objects into `test`
-- [x] Example test using a fixture (`tests/example.spec.ts`)
+- [x] Working end-to-end test flow added (`tests/first-test.spec.ts`, replacing `tests/example.spec.ts`) — navigates NBS homepage → searches → Dyson manufacturer page, then asserts the heading, phone number, and website link
 - [x] CI workflow added (`.github/workflows/playwright.yml`)
 - [x] `.env` handling added (`dotenv`) — `.env` is gitignored, `.env.example` is the tracked template
 - [x] `baseURL` wired to `.env` (`BASE_URL`) in `playwright.config.ts` — Page Objects use relative `goto('/')`
@@ -45,10 +48,12 @@ tsconfig.json
 - [x] GitHub Actions bumped to versions targeting Node 24 (`actions/checkout@v7`, `actions/setup-node@v7`, `actions/upload-artifact@v7`), clearing the Node 20 deprecation warning
 - [x] `dotenv` startup noise silenced with `quiet: true` in `playwright.config.ts`
 - [x] Playwright browsers cached in CI (`actions/cache`, keyed on `package-lock.json`) — skips the browser download on cache hits, speeding up the pipeline
+- [x] `@axe-core/playwright` installed — accessibility scans run via `utils/axe-utils.ts` and attach results (violation count + full JSON) to the HTML report; deliberately non-failing since existing site issues aren't being fixed and shouldn't fail the pipeline
 
 ### Still to build out
 
-- [ ] Add locators and actions to `DysonManufacturerPage`
+- [ ] Add locators and actions to `DysonManufacturerPage` (heading, phone number, website link currently live as raw locators in the test file)
+- [ ] Register `SearchResultsPage` (and `DysonManufacturerPage`) as fixtures and use the fixture-injected page objects in `first-test.spec.ts`, rather than `new NbsHomepage(page)` etc. inside `beforeEach`
 - [ ] Add a Page Object + fixture for every new page under test
 - [ ] Add page-specific assertions/checks (rather than generic ones in test files)
 - [ ] Decide on test data handling (e.g. a `test-data/` folder for non-secret fixtures)
@@ -89,3 +94,16 @@ npm run test:headed  # run with the browser visible
 npm run test:ui      # run in Playwright's UI mode
 npm run report        # open the last HTML report
 ```
+
+## Generating locators with codegen
+
+Playwright's codegen tool opens a browser, records your clicks/inputs, and
+writes the locator code for you — a good starting point for filling in a
+Page Object's `// Locators` and `// Actions` sections.
+
+```
+npm run codegen -- https://source.thenbs.com/en/gb
+```
+
+The `--` is required so npm passes the URL through to codegen instead of
+treating it as an npm flag.
