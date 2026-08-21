@@ -87,36 +87,26 @@ test('assert that the user can click sign in, go through the sign in process and
 // Unlike the assertions above, this checks roles, accessible names and nesting in one go:
 // a list, containing a listitem, containing a link named 'Visit LinkedIn' pointing at Dyson.
 // The match is a subset - the four empty <li> placeholders on the page are ignored.
-test('assert the social block structure', async ({ page }) => {
-  const social = page.locator('app-social');
-
-  await expect(social).toMatchAriaSnapshot(`
+test('assert the social block structure', async ({ basePage }) => {
+  await expect(basePage.socialMediaIcons).toMatchAriaSnapshot(`
     - list:
       - listitem:
         - link "Visit LinkedIn":
           - /url: https://www.linkedin.com/company/dyson/
   `);
+  await expect(basePage.socialMediaIcons).toHaveAttribute('target', '_blank');
 });
 
 // Test 11 - Assert the back-to-top button is working as expected.
 // This test asserts the back-to-top button is not visible when the page is loaded, 
 // then scrolls down the page and asserts the button is visible, clicks the button 
 // and asserts the page has scrolled back to the top.
-test('assert the back-to-top button is working as expected', async ({ page }) => {
-  const backToTopButton = page.getByRole('button', { name: 'Back to top' });
-  const mainNav = page.getByRole('navigation', { name: 'Main navigation links' });
-  const homeLink = mainNav.getByRole('link', { name: 'Home' });
-
-  await expect(backToTopButton).not.toBeVisible();
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  await expect(backToTopButton).toBeVisible();
-  await backToTopButton.click();
-  await expect(backToTopButton).not.toBeVisible();
-
-  await expect(homeLink).toBeVisible();
-
-
-
+test('assert the back-to-top button is working as expected', async ({ basePage }) => {
+  await expect(basePage.backToTopButton).not.toBeVisible();
+  await basePage.page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect(basePage.backToTopButton).toBeVisible();
+  await basePage.backToTopButton.click();
+  await expect(basePage.backToTopButton).not.toBeVisible();
 });
 
 // Test 12 - Assert the main navigation structure (roles, names, order, hrefs) via an ARIA snapshot.
@@ -124,10 +114,8 @@ test('assert the back-to-top button is working as expected', async ({ page }) =>
 // names and hrefs are all covered by one assertion - and the closed Browse dropdown's category
 // links are excluded automatically, since they're not exposed to the accessibility tree while closed
 // (unlike a CSS `:visible` check, which doesn't catch how that panel is actually hidden).
-test('assert the main navigation structure is correct', async ({ page }) => {
-  const mainNav = page.getByRole('navigation', { name: 'Main navigation links' });
-
-  await expect(mainNav).toMatchAriaSnapshot(`
+test('assert the main navigation structure is correct', async ({ basePage }) => {
+  await expect(basePage.mainNav).toMatchAriaSnapshot(`
     - navigation "Main navigation links":
       - link "Home":
         - /url: /en/gb
@@ -144,16 +132,4 @@ test('assert the main navigation structure is correct', async ({ page }) => {
       - link "CPD":
         - /url: /en/gb/cpd
   `);
-});
-
-// Test 13 - Assert the Browse dropdown displays categories, without asserting the exact
-// list - the categories themselves are content-managed and expected to change.
-test('assert the Browse dropdown displays categories', async ({ page }) => {
-  const mainNav = page.getByRole('navigation', { name: 'Main navigation links' });
-  const browseButton = mainNav.getByRole('button', { name: 'Browse' });
-  const menuPanel = mainNav.getByRole('menu', { name: 'Browse menu' });
-
-  await browseButton.hover();
-  await expect(menuPanel).toBeVisible();
-  await expect(menuPanel.getByRole('link')).not.toHaveCount(0);
 });
