@@ -44,6 +44,8 @@ tsconfig.json
 - [x] Data-driven manufacturer and product content suites (`tests/manufacturer.spec.ts`, `tests/product.spec.ts`) — one `test.describe` per entry in the corresponding `test-data/*.ts` file; adding an entry there gets it the full suite for free
 - [x] Structural-only smoke suites (`tests/manufacturer-smoke.spec.ts`, `tests/product-smoke.spec.ts`) for scaling coverage to many more pages without per-page content data
 - [x] Search flow, sign-in flow, and site chrome (nav/logo/back-to-top) split into their own spec files (`search.spec.ts`, `sign-in.spec.ts`, `site-chrome.spec.ts`) rather than being re-run as setup for every content test
+- [x] Reusable authenticated session (`tests/auth.setup.ts` + `setup` project in `playwright.config.ts`) — signs in once via the UI, saves `storageState` to `playwright/.auth/user.json` (gitignored); any future spec needing to run as a signed-in user uses `test.use({ storageState: authFile })` from `utils/auth.ts` instead of repeating the UI login per test
+- [x] `playwright.yml` wired to pass `NBS_USERNAME`/`PASSWORD` into the test step's `env:` (same pattern as `BASE_URL`) — required now the `setup` project performs a real sign-in on every CI run
 - [x] CI workflow added (`.github/workflows/playwright.yml`)
 - [x] `.env` handling added (`dotenv`) — `.env` is gitignored, `.env.example` is the tracked template
 - [x] `baseURL` wired to `.env` (`BASE_URL`) in `playwright.config.ts` — Page Objects use relative `goto('/')`
@@ -57,7 +59,7 @@ tsconfig.json
 ### Still to build out
 
 - [ ] Grow `manufacturers`/`manufacturerSmokeUrls` and `products`/`productSmokeUrls` beyond one entry each (currently identical to their respective content lists) — decide how the smoke lists get sourced at scale (hardcoded list vs. pulled from a sitemap/API)
-- [ ] Add `USERNAME`/`PASSWORD` as GitHub Actions secrets (same pattern as `BASE_URL`) once CI needs to run `sign-in.spec.ts`
+- [ ] **Add the actual `NBS_USERNAME`/`PASSWORD` secret values in the GitHub repo settings** (Settings → Secrets and variables → Actions) — `playwright.yml` now references them, but CI will fail on the `setup` project until the real values are added there (this is a repo-settings action, not something fixable in code)
 - [ ] Add more example tests demonstrating common patterns (hooks, tags)
 - [ ] Agree and document locator/action naming conventions
 - [ ] Agree on assertion conventions (built-in `expect` vs custom matchers)

@@ -36,9 +36,11 @@ There is no lint script configured.
   - `manufacturer.spec.ts`, `product.spec.ts` — data-driven, one `test.describe` per entry in the corresponding `test-data/*.ts` file, full content assertions (`goto`'s the page URL directly).
   - `manufacturer-smoke.spec.ts`, `product-smoke.spec.ts` — loop the corresponding smoke URL list, structural-only assertions (no exact expected content) plus the accessibility scan, so they can scale to a much larger sample of pages than the content suites.
   - `search.spec.ts` — the search → results → manufacturer-page navigation flow, tested once (not re-run as setup for every content test).
-  - `sign-in.spec.ts`, `site-chrome.spec.ts` — page-independent flows/chrome, each navigates directly to one representative manufacturer page rather than depending on the search flow.
-- `playwright.config.ts` — loads `.env` via `dotenv`; `baseURL` comes from `BASE_URL` so Page Objects use relative `goto('/')`. `locale`/`timezoneId` are pinned to `en-GB`/`Europe/London` because Chromium's default `en-US` locale triggers this site's US redirect. Projects: chromium, firefox, webkit.
-- `.github/workflows/playwright.yml` — CI. `BASE_URL` is passed in via a GitHub Actions secret (no `.env` on CI).
+  - `sign-in.spec.ts` — tests the login mechanism itself (starts signed out, via the homepage - the sign-in button is site chrome, present on every page, so no manufacturer/product navigation is needed).
+  - `site-chrome.spec.ts` — page-independent chrome (nav/logo/back-to-top), navigates directly to one representative manufacturer page (needed for the back-to-top test's scroll height).
+  - `auth.setup.ts` — not a real test; signs in once via the UI and saves the session to `playwright/.auth/user.json` (path in `utils/auth.ts`, gitignored). Runs as the `setup` project, which `chromium`/`firefox`/`webkit` declare as a `dependencies` entry in `playwright.config.ts`, so it always runs first. Any *other* spec that needs to run as an already-signed-in user (not `sign-in.spec.ts` itself, which needs to start signed out) should add `test.use({ storageState: authFile })` rather than calling `signInPage.signIn()` — avoids re-driving the UI login per test.
+- `playwright.config.ts` — loads `.env` via `dotenv`; `baseURL` comes from `BASE_URL` so Page Objects use relative `goto('/')`. `locale`/`timezoneId` are pinned to `en-GB`/`Europe/London` because Chromium's default `en-US` locale triggers this site's US redirect. Projects: `setup` (see above), `chromium`, `firefox`, `webkit` (each depends on `setup`).
+- `.github/workflows/playwright.yml` — CI. `BASE_URL`, `NBS_USERNAME`, `PASSWORD` are passed in via GitHub Actions secrets (no `.env` on CI) — all three are required now since the `setup` project (an implicit dependency of every browser project) performs a real sign-in.
 
 ## Conventions
 

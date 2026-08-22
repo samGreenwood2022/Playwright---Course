@@ -1,12 +1,9 @@
-// Sign-in is page-independent, so this navigates directly to a representative
-// manufacturer page rather than going through the search flow (covered in search.spec.ts).
+// The sign-in button lives in the site header, present on every page, so this
+// only needs the homepage loaded - no need for a manufacturer/product page.
 import { test, expect } from '../fixtures/test-options';
-import { manufacturers } from '../test-data/manufacturers';
 
-const [manufacturer] = manufacturers;
-
-test.beforeEach(async ({ manufacturerPage }) => {
-  await manufacturerPage.goto(manufacturer.url);
+test.beforeEach(async ({ nbsHomepage }) => {
+  await nbsHomepage.navigateToNbsHomepage();
 });
 
 // Assert that the user can click sign in, go through the sign in process and
