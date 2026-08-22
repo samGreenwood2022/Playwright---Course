@@ -17,7 +17,8 @@ framework, or as a reference when building your own from scratch.
 
 ```
 fixtures/       Custom test fixtures - wires Page Objects into `test`
-pages/          Page Object classes (one per page, all extend BasePage)
+pages/          Page Object classes (one per page/page-type, all extend BasePage)
+test-data/      Non-secret expected content per page instance (e.g. per manufacturer)
 tests/          Spec files
 utils/          Shared test utilities (e.g. accessibility scanning)
 playwright.config.ts
@@ -37,9 +38,12 @@ tsconfig.json
 - [x] `BasePage` created — holds the shared `page` instance every Page Object extends
 - [x] First Page Object created (`NbsHomepage`) extending `BasePage` — has a `searchInput` locator and `navigateToNbsHomepage()` action
 - [x] Second Page Object created (`SearchResultsPage`) — `selectManufacturer(link, expectedUrl)` action wraps a click and its resulting `waitForURL`, keeping that mechanics out of the test file
-- [x] `DysonManufacturerPage` given a `url` property (its expected page URL) — locators/actions for the page itself still to come
+- [x] Generic `ManufacturerPage` Page Object (`pages/manufacturer-page.ts`) — structural only, shared by every manufacturer page; per-manufacturer expected content lives in `test-data/manufacturers.ts` instead of being hardcoded per page
+- [x] Generic `ProductPage` Page Object (`pages/product-page.ts`) — same pattern, built from codegen output recorded against a real product page and verified live; per-product expected content lives in `test-data/products.ts`
 - [x] Fixtures file created (`fixtures/test-options.ts`) wiring Page Objects into `test`
-- [x] Working end-to-end test flow added (`tests/first-test.spec.ts`, replacing `tests/example.spec.ts`) — navigates NBS homepage → searches → Dyson manufacturer page, then asserts the heading, phone number, and website link
+- [x] Data-driven manufacturer and product content suites (`tests/manufacturer.spec.ts`, `tests/product.spec.ts`) — one `test.describe` per entry in the corresponding `test-data/*.ts` file; adding an entry there gets it the full suite for free
+- [x] Structural-only smoke suites (`tests/manufacturer-smoke.spec.ts`, `tests/product-smoke.spec.ts`) for scaling coverage to many more pages without per-page content data
+- [x] Search flow, sign-in flow, and site chrome (nav/logo/back-to-top) split into their own spec files (`search.spec.ts`, `sign-in.spec.ts`, `site-chrome.spec.ts`) rather than being re-run as setup for every content test
 - [x] CI workflow added (`.github/workflows/playwright.yml`)
 - [x] `.env` handling added (`dotenv`) — `.env` is gitignored, `.env.example` is the tracked template
 - [x] `baseURL` wired to `.env` (`BASE_URL`) in `playwright.config.ts` — Page Objects use relative `goto('/')`
@@ -52,13 +56,9 @@ tsconfig.json
 
 ### Still to build out
 
-- [ ] Add locators and actions to `DysonManufacturerPage` (heading, phone number, website link currently live as raw locators in the test file)
-- [ ] Register `SearchResultsPage` (and `DysonManufacturerPage`) as fixtures and use the fixture-injected page objects in `first-test.spec.ts`, rather than `new NbsHomepage(page)` etc. inside `beforeEach`
-- [ ] Add a Page Object + fixture for every new page under test
-- [ ] Add page-specific assertions/checks (rather than generic ones in test files)
-- [ ] Decide on test data handling (e.g. a `test-data/` folder for non-secret fixtures)
-- [ ] Add `USERNAME`/`PASSWORD` as GitHub Actions secrets (same pattern as `BASE_URL`) once a test actually needs them
-- [ ] Add more example tests demonstrating common patterns (data-driven tests, hooks, tags)
+- [ ] Grow `manufacturers`/`manufacturerSmokeUrls` and `products`/`productSmokeUrls` beyond one entry each (currently identical to their respective content lists) — decide how the smoke lists get sourced at scale (hardcoded list vs. pulled from a sitemap/API)
+- [ ] Add `USERNAME`/`PASSWORD` as GitHub Actions secrets (same pattern as `BASE_URL`) once CI needs to run `sign-in.spec.ts`
+- [ ] Add more example tests demonstrating common patterns (hooks, tags)
 - [ ] Agree and document locator/action naming conventions
 - [ ] Agree on assertion conventions (built-in `expect` vs custom matchers)
 

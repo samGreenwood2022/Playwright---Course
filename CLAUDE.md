@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A teaching template for a Playwright + TypeScript automation framework, built around the Page Object Model (POM) pattern wired together with Playwright fixtures. Tests currently exercise the NBS Source site (`https://source.thenbs.com/en/gb`), navigating from the homepage search through to a manufacturer page (Dyson).
+A teaching template for a Playwright + TypeScript automation framework, built around the Page Object Model (POM) pattern wired together with Playwright fixtures. Tests exercise the NBS Source site (`https://source.thenbs.com/en/gb`), covering the homepage search flow, manufacturer pages, and product pages via generic, data-driven Page Objects (currently one manufacturer and one product — Dyson — in the test data).
 
 ## Commands
 
@@ -27,10 +27,16 @@ There is no lint script configured.
 
 ## Architecture
 
-- `fixtures/test-options.ts` — extends Playwright's `test` with custom fixtures, one per Page Object (`nbsHomepage`, `searchResultsPage`, `dysonManufacturerPage`, `basePage`). Tests should import `test`/`expect` from here, not from `@playwright/test`, so they get the injected page objects instead of constructing `new PageObject(page)` manually. **Note:** `first-test.spec.ts` currently still constructs page objects manually in `beforeEach`/tests rather than using the fixtures — migrating it to the fixture-injected objects is an open item (see README checklist).
-- `pages/base-page.ts` — `BasePage` holds the shared `page` instance; every Page Object extends it. Shared locators/actions common to all pages belong here.
-- `pages/*.ts` — one Page Object per page (`NbsHomepage`, `SearchResultsPage`, `DysonManufacturerPage`), each with `// Locators` and `// Actions` sections. Keep that section-header convention when adding to them.
-- `tests/*.spec.ts` — spec files. `first-test.spec.ts` drives NBS homepage → search → Dyson manufacturer page in `beforeEach`, then each `test()` asserts one piece of the manufacturer page.
+- `fixtures/test-options.ts` — extends Playwright's `test` with custom fixtures, one per Page Object (`nbsHomepage`, `searchResultsPage`, `manufacturerPage`, `productPage`, `basePage`, `signInPage`). Tests should import `test`/`expect` from here, not from `@playwright/test`, so they get the injected page objects instead of constructing `new PageObject(page)` manually.
+- `pages/base-page.ts` — `BasePage` holds the shared `page` instance; every Page Object extends it. Shared locators/actions common to all pages (site chrome: nav, logo, back-to-top, social icons) belong here.
+- `pages/manufacturer-page.ts`, `pages/product-page.ts` — one **generic, structural** Page Object per page-type, shared by every manufacturer/product page on the site (thousands of them, all sharing the same layout). They hold no manufacturer/product-specific text. Locators whose only accessible name *is* content-specific (a phone link, a logo, the "View more from &lt;manufacturer&gt;" link) are exposed as methods (e.g. `telephoneNumber(number)`, `manufacturerLogo(name)`, `viewMoreFromManufacturer(name)`) that take the expected value as a parameter, rather than being fixed locators. When adding locators here, verify them against the live site (`npx playwright test -g "<name>"`) rather than trusting codegen output as-is — codegen's recorded names/selectors can be ambiguous once real page content is present (e.g. an unscoped `getByRole('img', {name})` without `exact: true`, or an unscoped `getByText()` matching more than the intended element) and won't surface a strict-mode violation until run against the real page.
+- `test-data/manufacturers.ts`, `test-data/products.ts` — non-secret, per-instance expected values (`ManufacturerFixture[]`, `ProductFixture[]`), kept out of the Page Objects so adding a manufacturer/product means adding a data entry, not writing new test code. `manufacturerSmokeUrls`/`productSmokeUrls` are lighter parallel lists (URL only) for structural-only smoke coverage at larger scale.
+- `pages/*.ts` — one Page Object per page/page-type (`NbsHomepage`, `SearchResultsPage`, `ManufacturerPage`, `ProductPage`, `SignInPage`), each with `// Locators` and `// Actions` sections. Keep that section-header convention when adding to them.
+- `tests/*.spec.ts` — spec files, split by concern rather than one monolithic flow:
+  - `manufacturer.spec.ts`, `product.spec.ts` — data-driven, one `test.describe` per entry in the corresponding `test-data/*.ts` file, full content assertions (`goto`'s the page URL directly).
+  - `manufacturer-smoke.spec.ts`, `product-smoke.spec.ts` — loop the corresponding smoke URL list, structural-only assertions (no exact expected content) plus the accessibility scan, so they can scale to a much larger sample of pages than the content suites.
+  - `search.spec.ts` — the search → results → manufacturer-page navigation flow, tested once (not re-run as setup for every content test).
+  - `sign-in.spec.ts`, `site-chrome.spec.ts` — page-independent flows/chrome, each navigates directly to one representative manufacturer page rather than depending on the search flow.
 - `playwright.config.ts` — loads `.env` via `dotenv`; `baseURL` comes from `BASE_URL` so Page Objects use relative `goto('/')`. `locale`/`timezoneId` are pinned to `en-GB`/`Europe/London` because Chromium's default `en-US` locale triggers this site's US redirect. Projects: chromium, firefox, webkit.
 - `.github/workflows/playwright.yml` — CI. `BASE_URL` is passed in via a GitHub Actions secret (no `.env` on CI).
 
