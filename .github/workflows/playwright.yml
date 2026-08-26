@@ -31,6 +31,8 @@ jobs:
       run: npx playwright test
       env:
         BASE_URL: ${{ secrets.BASE_URL }}
+        NBS_USERNAME: ${{ secrets.NBS_USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
     - uses: actions/upload-artifact@v7
       if: ${{ !cancelled() }}
       with:
