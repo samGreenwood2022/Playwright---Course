@@ -9,6 +9,12 @@ import { runAxeAccessibilityScan } from '../utils/axe-utils';
 for (const url of manufacturerSmokeUrls) {
   test(`manufacturer page renders and passes a11y scan: ${url}`, async ({ page, manufacturerPage }) => {
     await manufacturerPage.goto(url);
+
+    // Core assertions only - structural elements guaranteed on every
+    // manufacturer page. Variant elements (e.g. social links) aren't checked
+    // here since manufacturerSmokeUrls carries no fixture data saying which
+    // ones a given URL has - that's what manufacturer.spec.ts's variant
+    // tests are for.
     await expect(manufacturerPage.h1Heading).toBeVisible();
     await expect(manufacturerPage.websiteLink).toHaveAttribute('href', /^https?:\/\//);
     await expect(manufacturerPage.contactManufacturerCta).toBeVisible();

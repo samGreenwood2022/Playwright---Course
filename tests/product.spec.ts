@@ -13,6 +13,12 @@ for (const product of products) {
       await productPage.goto(product.url);
     });
 
+    // Core tests - assert elements present on every product page, so they
+    // run unconditionally for every entry in test-data/products.ts. No
+    // variant tests yet - once a product-specific optional element is
+    // identified, add an optional field to ProductFixture and a guarded
+    // loop here, following the pattern in tests/manufacturer.spec.ts.
+
     test('product heading is correct', async ({ productPage }) => {
       await expect(productPage.productHeading).toBeVisible();
       await expect(productPage.productHeading).toContainText(product.name);

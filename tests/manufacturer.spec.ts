@@ -12,6 +12,9 @@ for (const manufacturer of manufacturers) {
       await manufacturerPage.goto(manufacturer.url);
     });
 
+    // Core tests - assert elements present on every manufacturer page, so
+    // they run unconditionally for every entry in test-data/manufacturers.ts.
+
     test('h1 heading is correct', async ({ manufacturerPage }) => {
       await expect(manufacturerPage.h1Heading).toBeVisible();
       await expect(manufacturerPage.h1Heading).toContainText(manufacturer.name);
@@ -48,14 +51,19 @@ for (const manufacturer of manufacturers) {
       await expect(manufacturerPage.imAManufacturerCta).toHaveAttribute('href', 'https://manufacturers.thenbs.com/nbs-source');
     });
 
-    // Checks roles, accessible names and nesting in one go: a list, containing a
-    // listitem, containing a link named 'Visit LinkedIn' pointing at this manufacturer.
-    // The match is a subset - the empty <li> placeholders on the page are ignored.
-    test('social block structure is correct', async ({ manufacturerPage }) => {
-      await expect(manufacturerPage.linkedInIcon).toBeVisible();
-      await expect(manufacturerPage.linkedInIcon).toHaveAttribute('href', manufacturer.linkedIn);
-      await expect(manufacturerPage.linkedInIcon).toHaveAttribute('target', '_blank');
-      await expect(manufacturerPage.linkedInIcon).toHaveAttribute('title', 'Visit LinkedIn');
-    });
+    // Variant tests - only run for elements this manufacturer's fixture entry
+    // declares, since not every manufacturer page has every optional element.
+    // One test per social link declared in test-data/manufacturers.ts - a
+    // manufacturer with no socialLinks simply gets no tests here, rather than
+    // failing an assertion that doesn't apply.
+    for (const social of manufacturer.socialLinks ?? []) {
+      test(`${social.platform} icon is correct`, async ({ manufacturerPage }) => {
+        const icon = manufacturerPage.socialIcon(social.platform);
+        await expect(icon).toBeVisible();
+        await expect(icon).toHaveAttribute('href', social.url);
+        await expect(icon).toHaveAttribute('target', '_blank');
+        await expect(icon).toHaveAttribute('title', `Visit ${social.platform}`);
+      });
+    }
   });
 }

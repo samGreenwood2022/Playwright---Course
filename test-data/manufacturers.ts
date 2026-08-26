@@ -6,8 +6,12 @@ export type ManufacturerFixture = {
     url: string;
     telephone: string;
     website: string;
-    linkedIn: string;
     contactCtaTitle: string;
+    // Not every manufacturer page shows the same set of social icons - only
+    // declare the ones this manufacturer actually has, and
+    // tests/manufacturer.spec.ts will generate one test per entry here.
+    // Platform name must match the site's "Visit <platform>" accessible name.
+    socialLinks?: { platform: string; url: string }[];
 };
 
 export const manufacturers: ManufacturerFixture[] = [
@@ -16,11 +20,16 @@ export const manufacturers: ManufacturerFixture[] = [
         url: 'https://source.thenbs.com/en/gb/manufacturer/dyson/nakAxHWxDZprdqkBaCdn4U/overview',
         telephone: '08003457788',
         website: 'https://www.dyson.co.uk/commercial/overview',
-        linkedIn: 'https://www.linkedin.com/company/dyson/',
         contactCtaTitle: 'Contact Dyson',
+        socialLinks: [
+            { platform: 'LinkedIn', url: 'https://www.linkedin.com/company/dyson/' },
+        ],
     },
     // Add more manufacturers here as they're brought under test - each one
-    // gets the full content-assertion suite in tests/manufacturer.spec.ts for free.
+    // gets the full content-assertion suite in tests/manufacturer.spec.ts for
+    // free. Pick manufacturers so the union of their socialLinks (and any
+    // future optional fields) covers every variant element worth testing -
+    // one feature-rich entry plus one or two covering whatever it lacks.
 ];
 
 // Lighter-weight list for tests/manufacturer-smoke.spec.ts - just enough to

@@ -7,7 +7,6 @@ export class ManufacturerPage extends BasePage {
 
     readonly h1Heading: Locator;
     readonly websiteLink: Locator;
-    readonly linkedInIcon: Locator;
     readonly contactManufacturerCta: Locator;
     readonly imAManufacturerCta: Locator;
 
@@ -17,19 +16,25 @@ export class ManufacturerPage extends BasePage {
         super(page);
         this.h1Heading = page.locator('h1');
         this.websiteLink = page.getByRole('link', { name: 'Website' });
-        this.linkedInIcon = page.locator('app-social').getByRole('link', { name: 'Visit LinkedIn' });
         this.contactManufacturerCta = page.getByRole('button', { name: 'Contact manufacturer' });
         this.imAManufacturerCta = page.getByRole('link', { name: 'I\'m a manufacturer' });
     }
 
-    // The telephone link and logo are only locatable by their manufacturer-specific
-    // accessible name, so these are built from data rather than fixed as class locators.
+    // The telephone link, logo and social icons are only locatable by their
+    // manufacturer-specific accessible name, so these are built from data
+    // rather than fixed as class locators.
     telephoneNumber(number: string): Locator {
         return this.page.getByRole('link', { name: number });
     }
 
     manufacturerLogo(name: string): Locator {
         return this.page.getByRole('img', { name, exact: true });
+    }
+
+    // Not every manufacturer has every platform - callers pass whichever
+    // platform(s) test-data/manufacturers.ts declares for that manufacturer.
+    socialIcon(platform: string): Locator {
+        return this.page.locator('app-social').getByRole('link', { name: `Visit ${platform}` });
     }
 
     // Actions
