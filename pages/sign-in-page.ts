@@ -17,7 +17,7 @@ export class SignInPage extends BasePage {
         this.passwordInput = page.getByRole('textbox', { name: 'Password' });
         this.signInButton = page.getByRole('button', { name: 'Sign in' });
         this.urlBeforeSignIn = page.url();
-        this.avatar = page.getByRole('figure', { name: 'Avatar for TJ Hooker' });
+        this.avatar = page.getByRole('figure', { name: 'Avatar for Scott Barrass' });
     }
 
     async signIn() {

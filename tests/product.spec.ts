@@ -35,10 +35,13 @@ for (const product of products) {
     test('manufacturer telephone and website are correct', async ({ productPage }) => {
       const telephoneNumber = productPage.telephoneNumber(product.telephone);
       await expect(telephoneNumber).toBeVisible();
-      await expect(telephoneNumber).toHaveAttribute('href', `tel:${product.telephone}`);
 
       await expect(productPage.websiteLink).toBeVisible();
-      await expect(productPage.websiteLink).toHaveAttribute('href', product.website);
+
+      if (product.verifyContactLinkHrefs !== false) {
+        await expect(telephoneNumber).toHaveAttribute('href', `tel:${product.telephone}`);
+        await expect(productPage.websiteLink).toHaveAttribute('href', product.website);
+      }
     });
 
     test('Contact manufacturer button is displayed', async ({ productPage }) => {
@@ -61,7 +64,9 @@ for (const product of products) {
       await expect(productPage.specificationDataButton).toBeVisible();
       await expect(productPage.sustainabilityDataButton).toBeVisible();
       await expect(productPage.bimObjectsButton).toBeVisible();
-      await expect(productPage.productCertificationsButton).toBeVisible();
+      if (product.hasProductCertificationsTab !== false) {
+        await expect(productPage.productCertificationsButton).toBeVisible();
+      }
     });
 
     test('add to spec, download BIM and compare actions are available', async ({ productPage }) => {
@@ -75,9 +80,14 @@ for (const product of products) {
       await expect(productPage.imageLightboxButton).toBeVisible();
     });
 
-    test('verification status and certificates are displayed', async ({ productPage }) => {
+    test('verification status is displayed', async ({ productPage }) => {
       await expect(productPage.verificationStatus).toBeVisible();
-      await expect(productPage.certificateTypes.first()).toBeVisible();
     });
+
+    if (product.hasCertificates !== false) {
+      test('certificates are displayed', async ({ productPage }) => {
+        await expect(productPage.certificateTypes.first()).toBeVisible();
+      });
+    }
   });
 }

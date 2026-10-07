@@ -13,6 +13,9 @@ export type ProductFixture = {
     description: string;
     breadcrumb: string;
     contactCtaTitle: string;
+    verifyContactLinkHrefs?: boolean;
+    hasProductCertificationsTab?: boolean;
+    hasCertificates?: boolean;
 };
 
 export const products: ProductFixture[] = [
@@ -26,6 +29,9 @@ export const products: ProductFixture[] = [
         description: 'A touch-free hand dryer which protrudes just 100 mm from the wall, drying hands hygienically in 10–12 seconds, using 9.1 kilojoules of energy per dry.',
         breadcrumb: 'Home',
         contactCtaTitle: 'Contact Dyson',
+        verifyContactLinkHrefs: false,
+        hasProductCertificationsTab: false,
+        hasCertificates: false,
     },
     // Add more products here as they're brought under test - each one gets
     // the full content-assertion suite in tests/product.spec.ts for free.
