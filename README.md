@@ -18,6 +18,7 @@ framework, or as a reference when building your own from scratch.
 ```
 fixtures/       Custom test fixtures - wires Page Objects into `test`
 pages/          Page Object classes (one per page/page-type, all extend BasePage)
+helpers/        Shared checks for manufacturer and partner overview pages
 test-data/      Non-secret expected content per page instance (e.g. per manufacturer)
 tests/          Spec files
 utils/          Shared test utilities (e.g. accessibility scanning)
@@ -42,6 +43,7 @@ tsconfig.json
 - [x] Generic `ProductPage` Page Object (`pages/product-page.ts`) — same pattern, built from codegen output recorded against a real product page and verified live; per-product expected content lives in `test-data/products.ts`
 - [x] Fixtures file created (`fixtures/test-options.ts`) wiring Page Objects into `test`
 - [x] Data-driven manufacturer and product content suites (`tests/manufacturer.spec.ts`, `tests/product.spec.ts`) — one `test.describe` per entry in the corresponding `test-data/*.ts` file; adding an entry there gets it the full suite for free
+- [x] Data-driven partner overview suite (`tests/partner-page.spec.ts`) — expected values are loaded from `test-data/partners.json`
 - [x] Structural-only smoke suites (`tests/manufacturer-smoke.spec.ts`, `tests/product-smoke.spec.ts`) for scaling coverage to many more pages without per-page content data
 - [x] Search flow, sign-in flow, and site chrome (nav/logo/back-to-top) split into their own spec files (`search.spec.ts`, `sign-in.spec.ts`, `site-chrome.spec.ts`) rather than being re-run as setup for every content test
 - [x] Reusable authenticated session (`tests/auth.setup.ts` + `setup` project in `playwright.config.ts`) — signs in once via the UI, saves `storageState` to `playwright/.auth/user.json` (gitignored); any future spec needing to run as a signed-in user uses `test.use({ storageState: authFile })` from `utils/auth.ts` instead of repeating the UI login per test
@@ -95,6 +97,7 @@ npm test           # run all tests
 npm run test:headed  # run with the browser visible
 npm run test:ui      # run in Playwright's UI mode
 npm run report        # open the last HTML report
+npx playwright test tests/partner-page.spec.ts --project=chromium --no-deps
 ```
 
 ## Generating locators with codegen
