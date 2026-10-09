@@ -1,1 +1,1 @@
-Nik merge conflict
+Nik merge conflict - I have added some text to conflict with Sam
